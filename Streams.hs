@@ -48,4 +48,4 @@ instance Semiring d => SAlgebra d (Stream d) where
   shom d = d :< zero
 
 forwardAll :: (Eq v, Semiring d) => (v -> d) -> Expr v -> v -> Stream d
-forwardAll gen e v = d :< (ds v) where CW d ds = abstractD gen e
+forwardAll gen e v = d :< ds v where CW d ds = abstractD gen e

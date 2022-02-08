@@ -43,7 +43,7 @@ example3' :: AbstractExprn
 example3' [x]   = times x (times (plus x one) (plus x x))
 
 abstract_reverseAD_n :: forall d. Semiring d => AbstractExprn -> [ d ] -> Map Int d
-abstract_reverseAD_n e ds = (sparseSA . absEndo . absHom . eCW . e) [ CW d (delta i) | ((i :: Int) , d) <- zip [0..] ds ]
+abstract_reverseAD_n e ds = (sparseSA . absEndo . absHom . eCW . e) [ CW d (delta i) | (i :: Int, d) <- zip [0..] ds ]
 
 -- > abstract_reverseAD_n example2' [5,3]
 -- fromList [(0,4),(1,5)]

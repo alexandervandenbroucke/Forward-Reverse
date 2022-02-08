@@ -36,7 +36,7 @@ instance Semigroup e => Semigroup (Hom d e) where
   Hom f <> Hom g = Hom (\d -> f d <> g d)
 
 instance Monoid e => Monoid (Hom  d e) where
-  mempty = Hom (\d -> mempty)
+  mempty = Hom (const mempty)
 
 instance SModule d e => SModule d (Hom d e) where
   d' `sact` (Hom f) = Hom (\d -> f (d' `times` d))
@@ -67,7 +67,7 @@ reverseAD_extract gen = sparseSA . absHom . eCW . reverseAD gen
 newtype Endo e = E { unE :: e -> e }
 
 reprEndo :: Monoid e => e -> Endo e
-reprEndo e = E (\e' -> e' <> e)
+reprEndo e = E (<> e)
 
 absEndo :: Monoid e => Endo e -> e
 absEndo (E f) = f mempty
@@ -84,7 +84,7 @@ instance SModule d e => SModule d (Endo e) where
   d `sact` E f = E (\e -> f (d `sact` e))
 
 instance Kronecker v d e => Kronecker v d (Endo e) where
-  sdelta d v = E (\e -> e <> (sdelta d v))
+  sdelta d v = E (\e -> e <> sdelta d v)
 
 reverseAD_Endo :: (Ord v, Semiring d) =>
   (v -> d) -> Expr v -> CliffordWeil d (Hom d (Endo (SparseSA v d)))

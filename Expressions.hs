@@ -22,8 +22,8 @@ instance Show a => Show (Expr a) where
  showsPrec p (Var x)        =  showsPrec p x
  showsPrec p Zero           =  shows 0
  showsPrec p One            =  shows 1
- showsPrec p (Plus e1 e2)   =  showParen (p >= 6) $ (showsPrec 6 e1) . (" + " ++) . (showsPrec 6 e2)
- showsPrec p (Times e1 e2)  =  showParen (p >= 7) $ (showsPrec 7 e1) . (" * " ++) . (showsPrec 7 e2)
+ showsPrec p (Plus e1 e2)   =  showParen (p >= 6) $ showsPrec 6 e1 . (" + " ++) . showsPrec 6 e2
+ showsPrec p (Times e1 e2)  =  showParen (p >= 7) $ showsPrec 7 e1 . (" * " ++) . showsPrec 7 e2
 
 -- example 1
 

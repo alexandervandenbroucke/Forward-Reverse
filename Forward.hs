@@ -46,10 +46,10 @@ type Dense v e = v -> e
 -- instances
 
 instance SModule d e => SModule d (Dense v e) where
-  d `sact` (f) = h where h v = d `sact` (f v)
+  d `sact` f = h where h v = d `sact` f v
 
 instance (Eq v, SAlgebra d e) => Kronecker v d (Dense v e) where
-  delta v = \ w -> if v == w then one else zero
+  delta v w = if v == w then one else zero
 
 -- forward AD
 

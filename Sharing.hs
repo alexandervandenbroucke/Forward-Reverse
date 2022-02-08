@@ -9,15 +9,15 @@ import Abstract
 -- first add it as a meta-operation on Expr v
 
 letExpr :: Expr v -> Expr (Maybe v) -> Expr v
-letExpr e1 e2 = eval env e2 where
-  env Nothing  = e1
+letExpr e = eval env where
+  env Nothing  = e
   env (Just v) = Var v
 
 -- fuse let and eval: letEval env e1 e2 = eval env (letExpr e1 e2)
 
 letEval :: Semiring d => (v -> d) -> Expr v -> Expr (Maybe v) -> d
-letEval env e1 e2 = eval gen e2 where
-  gen Nothing  = eval env e1
+letEval env e = eval gen where
+  gen Nothing  = eval env e
   gen (Just v) = env v
 
 -- extend the syntax of expressions with Let
@@ -44,7 +44,7 @@ seval gen (SLet    e1 e2)  =  seval env e2 where
 -- modified abstractAD
 
 sabstractAD :: Kronecker v d e => (v -> d) -> SExpr v -> CliffordWeil d e
-sabstractAD var e = seval gen e where gen v = CW (var v) (delta v)
+sabstractAD var = seval gen where gen v = CW (var v) (delta v)
 
 -- with extraction function
 
