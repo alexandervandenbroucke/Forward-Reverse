@@ -6,6 +6,7 @@
 
 module Reverse where
 
+import Data.Monoid (Endo(..))
 import Data.Map
 import Data.Array.IO
 import Control.Monad (forM_)
@@ -64,27 +65,14 @@ reverseAD_extract gen = sparseSA . absHom . eCW . reverseAD gen
 -- Accumulating additions --
 ----------------------------
 
-newtype Endo e = E { unE :: e -> e }
-
-reprEndo :: Monoid e => e -> Endo e
-reprEndo e = E (<> e)
-
-absEndo :: Monoid e => Endo e -> e
-absEndo (E f) = f mempty
-
--- instances
-
-instance Semigroup (Endo e) where
-  E f <> E g = E (g . f)
-
-instance Monoid (Endo e) where
-  mempty = E id
+absEndo :: Monoid m => Endo m -> m
+absEndo (Endo f) = f mempty
 
 instance SModule d e => SModule d (Endo e) where
-  d `sact` E f = E (\e -> f (d `sact` e))
+  d `sact` Endo f = Endo (\e -> f (d `sact` e))
 
 instance Kronecker v d e => Kronecker v d (Endo e) where
-  sdelta d v = E (\e -> e <> sdelta d v)
+  sdelta d v = Endo (\e -> e <> sdelta d v)
 
 reverseAD_Endo
   :: (Ord v, Semiring d)
