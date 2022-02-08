@@ -86,8 +86,9 @@ instance SModule d e => SModule d (Endo e) where
 instance Kronecker v d e => Kronecker v d (Endo e) where
   sdelta d v = E (\e -> e <> sdelta d v)
 
-reverseAD_Endo :: (Ord v, Semiring d) =>
-  (v -> d) -> Expr v -> CliffordWeil d (Hom d (Endo (SparseSA v d)))
+reverseAD_Endo
+  :: (Ord v, Semiring d)
+  => (v -> d) -> Expr v -> CliffordWeil d (Hom d (Endo (SparseSA v d)))
 reverseAD_Endo = abstractD
 
 -- with extraction function
@@ -119,15 +120,22 @@ instance Monad m => Monoid (SM d m) where
 type MReadArray arr v e m = (Ix v, MArray arr e m, MonadReader (arr v e) m)
 
 modifyArrayAt :: MReadArray arr v e m => (e -> e) -> v -> m ()
-modifyArrayAt f v = do arr <- ask; a <- readArray arr v ; writeArray arr v (f a)
+modifyArrayAt f v = do
+  arr <- ask
+  a <- readArray arr v
+  writeArray arr v (f a)
 
 -- instances
 
 instance (SAlgebra d e, MReadArray arr v e m) => SModule d (SM d m) where
-  d `sact` com = SM $ do sm com; arr <- ask; b <- getBounds arr ; forM_ (range b) (modifyArrayAt (d `sact`))
+  d `sact` com = SM $ do
+    sm com
+    arr <- ask
+    b <- getBounds arr
+    forM_ (range b) (modifyArrayAt (d `sact`))
 
 instance (SAlgebra d e, MReadArray arr v e m) => Kronecker v d (SM d m) where
-  sdelta v d = SM $ modifyArrayAt (`mappend` shom d) v
+  sdelta v d = SM $ modifyArrayAt (<> shom d) v
 
 -- reverseAD
 
@@ -143,10 +151,11 @@ reverseAD_array_extract gen = absHom . eCW . reverseAD_array gen
 -- for IO
 
 reverseAD_CY_IO_extract :: forall v d. (Ix v, Semiring d) => (v -> d) -> Expr v -> (v,v) -> IO (Map v d)
-reverseAD_CY_IO_extract gen e rng = do (arr :: IOArray v (SemiringAsSAlgebra d)) <- newArray rng zero
-                                       runReaderT (sm $ reverseAD_array_extract gen e) arr
-                                       m <- getAssocs arr
-                                       return $ map sa $ fromAscList m
+reverseAD_CY_IO_extract gen e rng = do
+  (arr :: IOArray v (SemiringAsSAlgebra d)) <- newArray rng zero
+  runReaderT (sm $ reverseAD_array_extract gen e) arr
+  m <- getAssocs arr
+  return $ map sa $ fromAscList m
 
 instance MArray arr e m => MArray arr e (ReaderT x m) where
    getBounds = lift . getBounds
