@@ -91,10 +91,7 @@ instance {-# OVERLAPPABLE #-} Semiring d => SAlgebra d (SemiringAsSAlgebra d) wh
 -- Clifford-Weil --
 -------------------
 
-data CliffordWeil d e = CW { dCW :: d, eCW :: e } deriving Show
-
-instance Functor (CliffordWeil d) where
-  fmap h (CW d e) = CW d (h e)
+data CliffordWeil d e = CW { dCW :: d, eCW :: e } deriving (Show,Functor)
 
 -- the fundamental theorem: if e is a d-module, then CW d e is a semiring
 
